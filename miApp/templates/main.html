@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Salas ITID</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #eef1f5;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0056d6, #003b94);
+            color: white;
+            padding: 20px 30px 15px 30px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        header p {
+            margin: 5px 0 0 0;
+            font-size: 14px;
+            opacity: 0.95;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 12px;
+            align-items: center;
+        }
+
+        .user-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .btn {
+            display: inline-block;
+            background: white;
+            color: #0056d6;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background: #e3ebff;
+        }
+
+        .msg {
+            text-align: center;
+            font-size: 13px;
+            margin-top: 8px;
+            color: #e0e6ff;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 25px auto 15px auto;
+            padding: 0 15px 20px 15px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .list-wrapper {
+            background: #f9fafc;
+            border-radius: 12px;
+            padding: 10px 12px 15px 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            background: white;
+            padding: 16px 18px;
+            margin: 10px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sala-info {
+            max-width: 70%;
+        }
+
+        .sala-nombre {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0a3d91;
+            text-decoration: none;
+        }
+
+        .sala-nombre:hover {
+            text-decoration: underline;
+        }
+
+        .sala-detalle {
+            font-size: 14px;
+            margin-top: 4px;
+            color: #555;
+        }
+
+        .tag {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            min-width: 90px;
+            text-align: center;
+        }
+
+        .tag-disponible {
+            background: #e3f8e5;
+            color: #1b7a2f;
+        }
+
+        .tag-reservada {
+            background: #ffe1e1;
+            color: #c52020;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            padding: 8px 0 12px 0;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Salas de Estudio ITID</h1>
+    <p>Revisa la disponibilidad y reserva tu sala por un máximo de 2 horas.</p>
+
+    <div class="top-bar">
+        <a href="{% url 'lista_salas' %}" class="btn">Inicio</a>
+
+        {% if user.is_authenticated and user.is_staff %}
+            <span class="user-label">Conectado como {{ user.username }}</span>
+            <a href="{% url 'admin_salas' %}" class="btn">Administrar Salas</a>
+            <a href="{% url 'cerrar_sesion' %}" class="btn">Cerrar Sesión</a>
+        {% else %}
+            <a href="{% url 'login' %}?next=/" class="btn">Iniciar Sesión</a>
+        {% endif %}
+    </div>
+
+    {% if not user.is_authenticated %}
+        <p class="msg">Inicia sesión como administrador para gestionar las salas.</p>
+    {% endif %}
+</header>
+
+<div class="container">
+    <p class="subtitle">Listado de salas disponibles en la biblioteca ITID</p>
+
+    <div class="list-wrapper">
+        <ul>
+            {% for sala in salas %}
+            <li>
+                <div class="sala-info">
+                    <a class="sala-nombre" href="{% url 'detalle_sala' sala.id %}">
+                        {{ sala.nombre }}
+                    </a>
+                    <div class="sala-detalle">
+                        Capacidad: {{ sala.capacidad_maxima }} personas
+                    </div>
+                </div>
+
+                {% if sala.disponible %}
+                    <span class="tag tag-disponible">Disponible</span>
+                {% else %}
+                    <span class="tag tag-reservada">Reservada</span>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<footer>
+    Sistema de Reservas de Salas · ITID
+</footer>
+
+</body>
+</html>

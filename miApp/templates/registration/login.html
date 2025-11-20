@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar sesión - ITID</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #eef1f5;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 70px auto;
+            background: white;
+            padding: 25px 30px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 26px;
+            color: #0056d6;
+        }
+
+        p.subtitle {
+            margin: 0 0 20px 0;
+            font-size: 13px;
+            color: #666;
+        }
+
+        form {
+            margin-top: 10px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            margin-top: 12px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 9px 10px;
+            margin-top: 5px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 18px;
+            border-radius: 6px;
+            border: none;
+            background: #0056d6;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #003f9a;
+        }
+
+        .errorlist {
+            color: red;
+            font-size: 13px;
+            margin-top: 5px;
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .bottom-link {
+            margin-top: 15px;
+            font-size: 13px;
+        }
+
+        .bottom-link a {
+            color: #0056d6;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .bottom-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h1>Iniciar sesión</h1>
+    <p class="subtitle">Acceso para administradores de salas ITID</p>
+
+    {% if form.errors %}
+        <ul class="errorlist">
+            <li>Usuario o contraseña incorrectos.</li>
+        </ul>
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+
+        <label for="id_username">Usuario</label>
+        <input type="text" name="username" autofocus required id="id_username">
+
+        <label for="id_password">Contraseña</label>
+        <input type="password" name="password" required id="id_password">
+
+        <button type="submit">Ingresar</button>
+        <input type="hidden" name="next" value="{{ next|default:'/' }}">
+    </form>
+
+    <div class="bottom-link">
+        <a href="{% url 'lista_salas' %}">Volver al inicio</a>
+    </div>
+</div>
+
+</body>
+</html>

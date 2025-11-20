@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Administración de Salas</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #eef1f5;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0056d6, #003b94);
+            color: white;
+            padding: 18px 30px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        header p {
+            margin: 4px 0 0 0;
+            font-size: 13px;
+            opacity: 0.95;
+        }
+
+        .top-bar {
+            margin-top: 10px;
+        }
+
+        .top-link {
+            display: inline-block;
+            background: white;
+            color: #0056d6;
+            padding: 7px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .top-link:hover {
+            background: #e3ebff;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 25px auto;
+            padding: 0 15px 25px 15px;
+        }
+
+        .card {
+            background: white;
+            margin: 0 auto 20px auto;
+            padding: 22px 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+
+        .card h2 {
+            text-align: center;
+            margin-top: 0;
+            font-size: 20px;
+            color: #0a3d91;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        form input,
+        form button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        form input {
+            border: 1px solid #ccc;
+        }
+
+        form button {
+            background: #0056d6;
+            color: white;
+            border: none;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+
+        form button:hover {
+            background: #003f9a;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            background: #fff;
+            padding: 14px 16px;
+            border-radius: 8px;
+            margin: 10px 0;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.08);
+        }
+
+        .sala-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sala-nombre {
+            font-weight: bold;
+            font-size: 16px;
+            color: #0a3d91;
+        }
+
+        .sala-capacidad {
+            font-size: 13px;
+            color: #555;
+        }
+
+        .estado-tag {
+            padding: 5px 10px;
+            border-radius: 14px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .estado-disponible {
+            background: #e3f8e5;
+            color: #1b7a2f;
+        }
+
+        .estado-reservada {
+            background: #ffe1e1;
+            color: #c52020;
+        }
+
+        .acciones {
+            margin-top: 10px;
+        }
+
+        .btn {
+            text-decoration: none;
+            padding: 7px 12px;
+            color: white;
+            border-radius: 5px;
+            margin-right: 6px;
+            font-size: 13px;
+            display: inline-block;
+        }
+
+        .edit {
+            background: #0056d6;
+        }
+
+        .edit:hover {
+            background: #003f9a;
+        }
+
+        .delete {
+            background: #d11b1b;
+        }
+
+        .delete:hover {
+            background: #aa1515;
+        }
+
+        .edit-form label {
+            display: block;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .edit-form input[type="checkbox"] {
+            width: auto;
+            margin-left: 6px;
+        }
+
+        .no-salas {
+            text-align: center;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Administración de Salas</h1>
+    <p>Gestión de salas de estudio de la biblioteca ITID</p>
+    <div class="top-bar">
+        <a class="top-link" href="{% url 'lista_salas' %}">Volver al inicio</a>
+    </div>
+</header>
+
+<div class="container">
+    <div class="card">
+        <h2>Agregar nueva sala</h2>
+
+        <form method="POST" action="{% url 'crear_sala' %}">
+            {% csrf_token %}
+            <input type="text" name="nombre" placeholder="Nombre de la sala" required>
+            <input type="number" name="capacidad" placeholder="Capacidad máxima de personas" required>
+            <button type="submit">Agregar Sala</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Salas registradas</h2>
+
+        {% if salas %}
+        <ul>
+            {% for sala in salas %}
+            <li>
+                <div class="sala-header">
+                    <div>
+                        <div class="sala-nombre">{{ sala.nombre }}</div>
+                        <div class="sala-capacidad">{{ sala.capacidad_maxima }} personas</div>
+                    </div>
+                    <div>
+                        {% if sala.disponible %}
+                            <span class="estado-tag estado-disponible">Disponible</span>
+                        {% else %}
+                            <span class="estado-tag estado-reservada">Reservada</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="acciones">
+                    <a href="{% url 'editar_sala' sala.id %}" class="btn edit">Editar</a>
+                    <a href="{% url 'eliminar_sala' sala.id %}" class="btn delete">Eliminar</a>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p class="no-salas">No hay salas registradas actualmente.</p>
+        {% endif %}
+    </div>
+
+    {% if editar %}
+    <div class="card">
+        <h2>Editando sala</h2>
+        <h3>{{ editar.nombre }}</h3>
+
+        <form class="edit-form" method="POST" action="{% url 'editar_sala' editar.id %}">
+            {% csrf_token %}
+            <label>Nombre de la sala</label>
+            <input type="text" name="nombre" value="{{ editar.nombre }}">
+
+            <label>Capacidad máxima</label>
+            <input type="number" name="capacidad" value="{{ editar.capacidad_maxima }}">
+
+            <label>
+                Disponible
+                <input type="checkbox" name="disponible" {% if editar.disponible %}checked{% endif %}>
+            </label>
+
+            <button type="submit">Actualizar Sala</button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+
+</body>
+</html>
